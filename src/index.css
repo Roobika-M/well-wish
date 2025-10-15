@@ -1,3 +1,83 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body {
+  background: linear-gradient(120deg,#f3f6fc,#f5f1fb 60%);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #222442;
+  margin: 0;
+  padding: 0;
+}
+
+.post-card {
+  background: #fff;
+  border: 1px solid #e6eaf6;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(60,80,140,0.08);
+  padding: 24px 20px 16px 20px;
+  margin-bottom: 30px;
+  max-width: 470px;
+}
+
+.comments-section {
+  margin-top: 15px;
+  background: #f7f9fd;
+  border-radius: 6px;
+  padding: 7px 14px 10px;
+}
+
+.comment {
+  margin-bottom: 12px;
+  border-left: 2px solid #dde2f6;
+  padding: 7px 15px;
+  font-size: 15px;
+  color: #3e4963;
+  background: #fafdff;
+}
+
+button, .comment button {
+  margin-top: 6px;
+  padding: 7px 17px;
+  border-radius: 7px;
+  border: none;
+  background: #6476f7;
+  color: #fff;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+button:disabled {
+  background: #c5c5d6;
+  color: #f5f5f5;
+}
+
+input, textarea {
+  width: 97%;
+  background: #f9fafc;
+  border: 1px solid #d5daf3;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 8px 9px;
+  font-size: 15px;
+}
+
+h4 {
+  margin-top: 8px;
+  margin-bottom: 6px;
+  color: #34448c;
+  font-size: 16px;
+}
+
+small {
+  color: #9c9dbb;
+  margin-right: 10px;
+  font-size: 12px;
+}
+
+/* Upvote icon style (optional, if you want to style) */
+button svg {
+  vertical-align: middle;
+  margin-right: 5px;
+}

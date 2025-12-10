@@ -1,14 +1,14 @@
 import { supabase } from '../lib/supabase';
 
 export interface Comment {
-  id: string;
-  post_id: string;
+  id: number;
+  post_id: number;
   content: string;
   upvotes: number;
   created_at: string;
 }
 
-export async function fetchComments(postId: string) {
+export async function fetchComments(postId: number) {
   const { data, error } = await supabase
     .from('comments')
     .select('*')
@@ -16,11 +16,11 @@ export async function fetchComments(postId: string) {
     .order('created_at', { ascending: true });
 
   if (error) throw error;
-  return data as Comment[];
+  return data;
 }
 
 
-export async function createComment(postId: string, content: string) {
+export async function createComment(postId: number, content: string) {
   const { data, error } = await supabase
     .from('comments')
     .insert([{ post_id: postId, content }])
@@ -28,10 +28,10 @@ export async function createComment(postId: string, content: string) {
     .single();
 
   if (error) throw error;
-  return data as Comment;
+  return data;
 }
 
-export async function upvoteComment(commentId: string, currentUpvotes: number) {
+export async function upvoteComment(commentId: number, currentUpvotes: number) {
   const { data, error } = await supabase
     .from('comments')
     .update({ upvotes: currentUpvotes + 1 })
@@ -40,5 +40,5 @@ export async function upvoteComment(commentId: string, currentUpvotes: number) {
     .single();
 
   if (error) throw error;
-  return data as Comment;
+  return data;
 }

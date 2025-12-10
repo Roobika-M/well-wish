@@ -40,35 +40,6 @@ body {
   font-weight: 700;
 }
 
-/* Dark mode variables and overrides */
-.dark {
-  --bg-1: #0f1724;
-  --bg-2: #071026;
-  --card-bg: #0b1220;
-  --muted: #98a0c0;
-  --primary: #6f8cff;
-  --primary-600: #5a75e6;
-  --accent: #8b6bff;
-  color-scheme: dark;
-}
-
-.dark body, .dark .app-container {
-  background: linear-gradient(120deg,var(--bg-1),var(--bg-2) 60%);
-  color: #dce6ff;
-}
-
-.dark .post-card {
-  background: #07112a;
-  border-color: rgba(255,255,255,0.04);
-  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-}
-
-.dark .comments-section { background: rgba(255,255,255,0.02); }
-.dark .comment { background: rgba(255,255,255,0.02); border-left-color: rgba(255,255,255,0.04); }
-.dark input, .dark textarea { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); color: #e6eefc }
-.dark .app-title { color: #e6eefc }
-.dark small, .dark .text-gray-500 { color: #9fb0e6 }
-
 .post-card {
   background: var(--card-bg);
   border: 1px solid #e6eaf6;

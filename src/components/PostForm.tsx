@@ -4,7 +4,6 @@ import { createPost } from '../services/posts';
 
 export function PostForm({ onPostCreated }: { onPostCreated: () => void }) {
   const [content, setContent] = useState('');
-  const [recipient, setRecipient] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +18,7 @@ export function PostForm({ onPostCreated }: { onPostCreated: () => void }) {
     setIsSubmitting(true);
     setError(null);
 
-    const { error: submitError } = await createPost(content.trim(), recipient.trim() || null);
+    const { error: submitError } = await createPost(content.trim());
 
     if (submitError) {
       setError('Failed to post your wish. Please try again.');
@@ -48,18 +47,6 @@ export function PostForm({ onPostCreated }: { onPostCreated: () => void }) {
           maxLength={500}
           disabled={isSubmitting}
         />
-        <div className="mt-3">
-          <input
-            id="recipient-input"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            placeholder="(Optional) Send anonymously to a name e.g. 'Amina'"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            maxLength={80}
-            disabled={isSubmitting}
-          />
-          <p className="text-xs text-gray-400 mt-1">If you provide a name, your wish will be visible when someone checks messages for that name.</p>
-        </div>
         <div className="flex items-center justify-between mt-4">
           <span className="text-sm text-gray-500">
             {content.length}/500 characters

@@ -1,13 +1,10 @@
 import { supabase, Post } from '../lib/supabase';
 
-export async function createPost(content: string, recipient?: string | null): Promise<{ data: Post | null; error: Error | null }> {
+export async function createPost(content: string): Promise<{ data: Post | null; error: Error | null }> {
   try {
-    const insertPayload: any = { content };
-    if (recipient && recipient.trim()) insertPayload.recipient = recipient.trim();
-
     const { data, error } = await supabase
       .from('posts')
-      .insert(insertPayload)
+      .insert({ content })
       .select()
       .single();
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 interface CommentFormProps {
-  postId: string;
+  postId: number;
   onCommentAdded: () => void;
-  createComment: (postId: string, content: string) => Promise<any>;
+  createComment: (postId: number, content: string) => Promise<void>;
 }
 
 export default function CommentForm({ postId, onCommentAdded, createComment }: CommentFormProps) {

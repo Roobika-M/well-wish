@@ -6,8 +6,9 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface Post {
-  id: number;
+  id: string;
   content: string;
   upvotes: number;
   created_at: string;
+  recipient?: string | null;
 }

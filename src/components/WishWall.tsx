@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ThumbsUp, Sparkles } from 'lucide-react';
 import { fetchPosts, upvotePost, subscribeToPostChanges } from '../services/posts';
 import { fetchComments, createComment, upvoteComment, Comment } from '../services/comments'; // Add comment services
@@ -7,11 +7,14 @@ import CommentForm from './CommentForm'; // Your comment form component
 
 export function WishWall() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [commentsMap, setCommentsMap] = useState<Record<number, Comment[]>>({});
+  const [commentsMap, setCommentsMap] = useState<Record<string, Comment[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [upvotingIds, setUpvotingIds] = useState<Set<number>>(new Set());
-  const [commentingIds, setCommentingIds] = useState<Set<number>>(new Set());
+  const [upvotingIds, setUpvotingIds] = useState<Set<string>>(new Set());
+  const [commentingIds, setCommentingIds] = useState<Set<string>>(new Set());
+  const [sortMode, setSortMode] = useState<'newest' | 'top' | 'comments'>('newest');
+  const [nameFilter, setNameFilter] = useState('');
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const loadPosts = async () => {
     const { data, error: fetchError } = await fetchPosts();
@@ -24,7 +27,7 @@ export function WishWall() {
     setLoading(false);
 
     // Fetch comments for all posts
-    const newCommentsMap: Record<number, Comment[]> = {};
+    const newCommentsMap: Record<string, Comment[]> = {};
     for (const post of data || []) {
       try {
         const comments = await fetchComments(post.id);
@@ -62,7 +65,7 @@ export function WishWall() {
     );
   };
 
-  const handleCommentAdded = async (postId: number) => {
+  const handleCommentAdded = async (postId: string) => {
     setCommentingIds(prev => {
       const newSet = new Set(prev);
       newSet.delete(postId);
@@ -77,7 +80,7 @@ export function WishWall() {
     }
   };
 
-  const handleCommentUpvote = async (postId: number, comment: Comment) => {
+  const handleCommentUpvote = async (postId: string, comment: Comment) => {
     if (commentingIds.has(comment.id)) return;
     setCommentingIds(prev => new Set(prev).add(comment.id));
     const { error } = await upvoteComment(comment.id, comment.upvotes);
@@ -113,15 +116,81 @@ export function WishWall() {
   if (error) return <p>{error}</p>;
   if (posts.length === 0) return <p>No wishes yet. Be the first to share!</p>;
 
+  const displayedPosts = useMemo(() => {
+    const copy = [...posts];
+    if (sortMode === 'newest') {
+      return copy.sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+    }
+    if (sortMode === 'top') {
+      return copy.sort((a, b) => (b.upvotes - a.upvotes));
+    }
+    // most commented
+    return copy.sort((a, b) => {
+      const aCount = (commentsMap[a.id] || []).length;
+      const bCount = (commentsMap[b.id] || []).length;
+      return bCount - aCount;
+    });
+  }, [posts, sortMode, commentsMap]);
+
   return (
     <div className="app-container">
       <div className="app-header">
         <Sparkles className="text-indigo-500" />
         <h2 className="app-title">Wish Wall</h2>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="text-sm text-gray-500">Sort:</span>
+          <div className="inline-flex rounded-md overflow-hidden border bg-white">
+            <button
+              onClick={() => setSortMode('newest')}
+              className={`px-3 py-1 text-sm ${sortMode === 'newest' ? 'bg-indigo-600 text-white' : 'text-gray-600'}`}
+            >
+              Newest
+            </button>
+            <button
+              onClick={() => setSortMode('top')}
+              className={`px-3 py-1 text-sm ${sortMode === 'top' ? 'bg-indigo-600 text-white' : 'text-gray-600'}`}
+            >
+              Top
+            </button>
+            <button
+              onClick={() => setSortMode('comments')}
+              className={`px-3 py-1 text-sm ${sortMode === 'comments' ? 'bg-indigo-600 text-white' : 'text-gray-600'}`}
+            >
+              Most commented
+            </button>
+          </div>
+        </div>
       </div>
 
+      <div className="mb-4 flex items-center gap-3">
+        <input
+          value={nameFilter}
+          onChange={e => setNameFilter(e.target.value)}
+          placeholder="Check messages for a name (e.g. Amina)"
+          className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+        />
+        <button
+          onClick={() => setActiveFilter(nameFilter.trim() || null)}
+          className="px-3 py-2 bg-indigo-600 text-white rounded-md text-sm"
+        >
+          Check
+        </button>
+        <button
+          onClick={() => { setNameFilter(''); setActiveFilter(null); }}
+          className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm"
+        >
+          Clear
+        </button>
+        {activeFilter && <div className="ml-auto text-sm text-gray-600">Showing messages for: <strong>{activeFilter}</strong></div>}
+      </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map(post => (
+        {displayedPosts
+          .filter(p => {
+            if (!activeFilter) return true;
+            const recip = (p.recipient || '').toLowerCase();
+            return recip === activeFilter.toLowerCase();
+          })
+          .map(post => (
           <article key={post.id} className="post-card">
             <p className="text-gray-800 mb-3">{post.content}</p>
             <div className="flex items-center justify-between gap-3">

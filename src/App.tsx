@@ -1,10 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { PostForm } from './components/PostForm';
 import { WishWall } from './components/WishWall';
 
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [dark, setDark] = useState<boolean>(() => {
+    try {
+      const v = localStorage.getItem('dark');
+      return v ? v === 'true' : false;
+    } catch { return false; }
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (dark) root.classList.add('dark'); else root.classList.remove('dark');
+    try { localStorage.setItem('dark', String(dark)); } catch {}
+  }, [dark]);
 
   const handlePostCreated = () => {
     setRefreshKey(prev => prev + 1);
@@ -21,9 +33,17 @@ function App() {
             </h1>
             <Sparkles className="text-purple-600" size={40} />
           </div>
-          <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
-            Share your wishes anonymously and support others by upvoting their dreams
-          </p>
+          <div className="flex items-center justify-center gap-4">
+            <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
+              Share your wishes anonymously and support others by upvoting their dreams
+            </p>
+            <button
+              onClick={() => setDark(prev => !prev)}
+              className="ml-3 px-3 py-1 rounded-md bg-gray-100 text-sm"
+            >
+              {dark ? 'Light' : 'Dark'}
+            </button>
+          </div>
         </header>
 
         <div className="mb-12">

@@ -114,45 +114,66 @@ export function WishWall() {
   if (posts.length === 0) return <p>No wishes yet. Be the first to share!</p>;
 
   return (
-    <div>
-      {posts.map(post => (
-        <div key={post.id} className="post-card">
-          <p>{post.content}</p>
-          <small>{formatDate(post.created_at)}</small>
-          <button
-            onClick={() => handleUpvote(post)}
-            disabled={upvotingIds.has(post.id)}
-            aria-label={`Upvote this wish (${post.upvotes} upvotes)`}
-          >
-            <ThumbsUp /> {post.upvotes}
-          </button>
+    <div className="app-container">
+      <div className="app-header">
+        <Sparkles className="text-indigo-500" />
+        <h2 className="app-title">Wish Wall</h2>
+      </div>
 
-          {/* Comments section */}
-          <div className="comments-section">
-            <h4>Comments</h4>
-            {(commentsMap[post.id] || []).map(comment => (
-              <div key={comment.id} className="comment">
-                <p>{comment.content}</p>
-                <small>{formatDate(comment.created_at)}</small>
-                <button
-                  onClick={() => handleCommentUpvote(post.id, comment)}
-                  disabled={commentingIds.has(comment.id)}
-                  aria-label={`Upvote this comment (${comment.upvotes} upvotes)`}
-                >
-                  <ThumbsUp /> {comment.upvotes}
-                </button>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {posts.map(post => (
+          <article key={post.id} className="post-card">
+            <p className="text-gray-800 mb-3">{post.content}</p>
+            <div className="flex items-center justify-between gap-3">
+              <small className="text-sm text-gray-500">{formatDate(post.created_at)}</small>
+              <button
+                onClick={() => handleUpvote(post)}
+                disabled={upvotingIds.has(post.id)}
+                aria-label={`Upvote this wish (${post.upvotes} upvotes)`}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white rounded-md"
+              >
+                <ThumbsUp /> <span className="text-sm">{post.upvotes}</span>
+              </button>
+            </div>
+
+            {/* Comments section */}
+            <div className="comments-section">
+              <h4>Comments</h4>
+              <div className="flex flex-col gap-3 mt-2">
+                {(commentsMap[post.id] || []).map(comment => (
+                  <div key={comment.id} className="comment">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-sm text-gray-800">{comment.content}</p>
+                        <small className="text-xs text-gray-400">{formatDate(comment.created_at)}</small>
+                      </div>
+                      <div>
+                        <button
+                          onClick={() => handleCommentUpvote(post.id, comment)}
+                          disabled={commentingIds.has(comment.id)}
+                          aria-label={`Upvote this comment (${comment.upvotes} upvotes)`}
+                          className="inline-flex items-center gap-2 px-2 py-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white rounded-md"
+                        >
+                          <ThumbsUp size={14} /> <span className="text-sm">{comment.upvotes}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
 
-            {/* Comment form */}
-            <CommentForm
-              postId={post.id}
-              createComment={createComment}
-              onCommentAdded={() => handleCommentAdded(post.id)}
-            />
-          </div>
-        </div>
-      ))}
+              {/* Comment form */}
+              <div className="mt-3">
+                <CommentForm
+                  postId={post.id}
+                  createComment={createComment}
+                  onCommentAdded={() => handleCommentAdded(post.id)}
+                />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }

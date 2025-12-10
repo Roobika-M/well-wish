@@ -27,10 +27,24 @@ export default function CommentForm({ postId, onCommentAdded, createComment }: C
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Add a comment..." />
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      <button type="submit">Submit Comment</button>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <textarea
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        placeholder="Add a comment..."
+        className="px-3 py-2 border border-gray-300 rounded-md resize-none text-sm"
+        rows={3}
+        maxLength={400}
+      />
+      <div className="flex items-center justify-between">
+        {error ? <p className="text-sm text-red-600">{error}</p> : <div />}
+        <button
+          type="submit"
+          className="ml-2 inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+        >
+          Submit
+        </button>
+      </div>
     </form>
   );
 }
